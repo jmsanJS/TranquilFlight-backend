@@ -7,7 +7,7 @@ const uid2 = require("uid2");
 
 router.post("/signup", (req, res) => {
   if (!checkBody(req.body, ["firstname", "lastname", "email", "password"])) {
-    res.json({ result: false, error: "Missing or empty fields" });
+    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
     return;
   }
 
@@ -19,6 +19,13 @@ router.post("/signup", (req, res) => {
         email: req.body.email,
         password: req.body.password,
         token: uid2(32),
+        settings: {
+          timezone: "UTC",
+          timeFormat: "24h",
+          distUnit: "Km",
+          tempUnit: "°C",
+          globalNotification: false
+        }
       });
 
       newUser.save().then((data) => {
@@ -33,14 +40,14 @@ router.post("/signup", (req, res) => {
         });
       });
     } else {
-      res.json({ result: false, error: "User already exists" });
+      res.json({ result: false, error: "L'utilisateur est déjà enregistré" });
     }
   });
 });
 
 router.post("/signin", (req, res) => {
   if (!checkBody(req.body, ["email", "password"])) {
-    res.json({ result: false, error: "Missing or empty fields" });
+    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
     return;
   }
 
@@ -56,7 +63,7 @@ router.post("/signin", (req, res) => {
         },
       });
     } else {
-      res.json({ result: false, error: "User not found or wrong password" });
+      res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
     }
   });
 });
@@ -64,7 +71,7 @@ router.post("/signin", (req, res) => {
 // Update user's password
 router.put("/", (req, res) => {
   if (!checkBody(req.body, ["email", "password", "newPassword"])) {
-    res.json({ result: false, error: "Missing or empty fields" });
+    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
     return;
   }
   User.findOne({ email: req.body.email }).then((data) => {
@@ -73,18 +80,46 @@ router.put("/", (req, res) => {
         { email: req.body.email },
         { password: req.body.newPassword }
       ).then(() => {
-        res.json({ result: true, message: "Your password has been updated" });
+        res.json({ result: true, message: "Le mot de passe est mis à jour" });
       });
     } else {
-      res.json({ result: false, error: "User not found or wrong password" });
+      res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
     }
   });
+});
+
+// Update user's infos (first and last name)
+router.put("/profile-update", (req, res) => {
+  if (!checkBody(req.body, ["email", "password", "firstname", "lastname"])) {
+    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
+    return;
+  }
+  User.findOne({ email: req.body.email, password: req.body.password }).then(
+    (data) => {
+      if (
+        req.body.email === data.email &&
+        req.body.password === data.password
+      ) {
+        User.updateOne(
+          { email: req.body.email },
+          {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+          }
+        ).then(() => {
+          res.json({ result: true, message: "Le profil a été mis à jour" });
+        });
+      } else {
+        res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
+      }
+    }
+  );
 });
 
 // Delete user's account
 router.delete("/", (req, res) => {
   if (!checkBody(req.body, ["email", "password"])) {
-    res.json({ result: false, error: "Missing or empty fields" });
+    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
     return;
   }
   User.findOne({ email: req.body.email }).then((data) => {
@@ -96,7 +131,7 @@ router.delete("/", (req, res) => {
         res.json({ result: true });
       });
     } else {
-      res.json({ result: false, error: "User not found or wrong password" });
+      res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
     }
   });
 });
