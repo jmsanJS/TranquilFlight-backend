@@ -90,27 +90,26 @@ router.put("/", (req, res) => {
 
 // Update user's infos (first and last name)
 router.put("/profile-update", (req, res) => {
-  if (!checkBody(req.body, ["email", "password", "firstname", "lastname"])) {
+  if (!checkBody(req.body, ["oldEmail","newEmail", "token"])) {
     res.json({ result: false, error: "Tous les champs doivent être renseignés" });
     return;
   }
-  User.findOne({ email: req.body.email, password: req.body.password }).then(
+  User.findOne({ oldEmail: req.body.email, token: req.body.token }).then(
     (data) => {
       if (
-        req.body.email === data.email &&
-        req.body.password === data.password
+        req.body.oldEmail === data.email &&
+        req.body.token === data.token
       ) {
         User.updateOne(
-          { email: req.body.email },
+          { token: req.body.token },
           {
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
+            email: req.body.newEmail
           }
         ).then(() => {
-          res.json({ result: true, message: "Le profil a été mis à jour" });
+          res.json({ result: true, message: "L'adresse email a été mise à jour" });
         });
       } else {
-        res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
+        res.json({ result: false, error: "Utilisateur inexistant" });
       }
     }
   );
@@ -118,20 +117,20 @@ router.put("/profile-update", (req, res) => {
 
 // Delete user's account
 router.delete("/", (req, res) => {
-  if (!checkBody(req.body, ["email", "password"])) {
-    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
+  if (!checkBody(req.body, ["email", "token"])) {
+    res.json({ result: false});
     return;
   }
-  User.findOne({ email: req.body.email }).then((data) => {
-    if (req.body.email === data.email && req.body.password === data.password) {
+  User.findOne({ email: req.body.email, token:req.body.token }).then((data) => {
+    if (req.body.email === data.email && req.body.token === data.token) {
       User.deleteOne({
         email: req.body.email,
-        password: req.body.password,
+        token: req.body.token,
       }).then(() => {
         res.json({ result: true });
       });
     } else {
-      res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
+      res.json({ result: false, error: "Utilisateur inexistant" });
     }
   });
 });
