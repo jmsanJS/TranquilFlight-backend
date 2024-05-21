@@ -7,7 +7,7 @@ const flightSchema = mongoose.Schema({
 
 const tripsSchema = mongoose.Schema(
   {
-    flight: flightSchema,
+    flights: [flightSchema],
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   },
   {
