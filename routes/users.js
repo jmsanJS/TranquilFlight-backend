@@ -136,6 +136,20 @@ router.delete("/", (req, res) => {
   });
 });
 
+// fetch(`http://localhost:3000/users/favorite`,{
+//   method: 'POST',
+//   headers: { 'Content-Type': 'application/json' },
+//   body: JSON.stringify({ flightNumber: flightNumber, flightData: flightData, email: email, token: token }),
+// })
+// .then((response) => response.json())
+// .then((data) => {
+//   if (data.result) {
+
+//   } else if (data.result === false) {
+
+//   }
+// });
+
 
 router.post('/favorite', async (req, res) => {
   if (!checkBody(req.body, ["flightNumber", "flightData", "email", "token"])) {
@@ -173,4 +187,53 @@ router.post('/favorite', async (req, res) => {
     res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
   }
 })
+
+// fetch(`http://localhost:3000/users/favorite`,{
+//   method: 'DELETE',
+//   headers: { 'Content-Type': 'application/json' },
+//   body: JSON.stringify({ flightNumber: flightNumber, email: email, token: token }),
+// })
+// .then((response) => response.json())
+// .then((data) => {
+//   if (data.result) {
+
+//   } else if (data.result === false) {
+
+//   }
+// });
+
+router.delete('/favorite', async (req, res) => {
+  if (!checkBody(req.body, ["flightNumber", "email", "token"])) {
+    res.json({ result: false, error:"Une erreur s'est produite, veuillez réessayer."});
+    return;
+  }
+
+  let userData = await User.findOne({ email: req.body.email, token: req.body.token })
+
+  if(userData){
+    let favorites = await Favorites.findOne({ user: userData.id });
+
+    if (favorites) {
+      const flightIndex = favorites.flights.findIndex(flight => flight.flightNumber.toString() === req.body.flightNumber);
+
+      if (flightIndex === -1) {
+        return res.status(404).json({
+          result: false,
+          message: "Vol non trouvé",
+        });
+      }
+
+      favorites.flights.splice(flightIndex, 1);
+      await favorites.save();
+
+      res.json({result: true});
+    } else {
+      res.json({result: false, message:'le vol a déjà été supprimé ou nexiste pas'});
+    }
+
+  }else{
+    res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
+  }
+})
+
 module.exports = router;
