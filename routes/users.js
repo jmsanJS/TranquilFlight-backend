@@ -143,13 +143,34 @@ router.post('/favorite', async (req, res) => {
     return;
   }
 
-  User.findOne({ email: req.body.email, token: req.body.token }).then((data) => {
-    if (data) {
-      //fetch Favorites avec ID
-    } else {
-      res.json({ result: false, error: "Utilisateur introuvable" });
-    }
-  });
+  let userData = await User.findOne({ email: req.body.email, token: req.body.token })
 
+  const newFavorite = {
+    flightNumber: req.body.flightNumber,
+    flightData: req.body.flightData,
+    notification: false,
+  };
+
+  if(userData){
+    let favorites = await Favorites.findOne({ user: userData.id });
+
+    if (favorites) {
+      console.log(favorites)
+      // Si le document existe, ajoutez le vol au tableau flights
+      favorites.flights.push(newFavorite);
+      res.json({result: true});
+    } else {
+      console.log('existe pas')
+      // Sinon, créez un nouveau document
+      favorites = new Favorites({
+        user: userData.id,
+        flights: [newFavorite],
+      });
+      res.json({result: true});
+    }
+    await favorites.save();
+  }else{
+    res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
+  }
 })
 module.exports = router;
