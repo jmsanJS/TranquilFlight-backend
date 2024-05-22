@@ -21,9 +21,9 @@ const XRapidAPIKey = process.env.XRapidAPIKey;
 //     }
 // });
 
-router.get("/", (req, res) => {
+router.get("/:flightNumber/:date", (req, res) => {
 
-    if (!checkBody(req.body, ["flightNumber", "date"])) {
+    if (!checkBody(req.params, ["flightNumber", "date"])) {
         res.json({
         result: false,
         error: "Tous les champs doivent être renseignés",
@@ -31,7 +31,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    fetch(`https://aerodatabox.p.rapidapi.com/flights/number/${req.body.flightNumber}/${req.body.date}`, {
+    fetch(`https://aerodatabox.p.rapidapi.com/flights/number/${req.params.flightNumber}/${req.params.date}`, {
         method: 'GET',
         headers: { 
             'X-RapidAPI-Key': XRapidAPIKey,
@@ -42,7 +42,7 @@ router.get("/", (req, res) => {
         if (data) {
             res.json({ result: true, flightData: data });
         }else if (!data){
-            res.json({ result: false, message: 'Vol introuvable' });
+            res.json({ result: false, error: 'Vol introuvable' });
         }
     });
 });
