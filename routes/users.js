@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 const User = require("../models/users");
+const Favorites = require("../models/favorites");
 const { checkBody } = require("../modules/checkBody");
 const uid2 = require("uid2");
 
@@ -135,4 +136,20 @@ router.delete("/", (req, res) => {
   });
 });
 
+
+router.post('/favorite', async (req, res) => {
+  if (!checkBody(req.body, ["flightNumber", "flightData", "email", "token"])) {
+    res.json({ result: false});
+    return;
+  }
+
+  User.findOne({ email: req.body.email, token: req.body.token }).then((data) => {
+    if (data) {
+      //fetch Favorites avec ID
+    } else {
+      res.json({ result: false, error: "Utilisateur introuvable" });
+    }
+  });
+
+})
 module.exports = router;

@@ -6,21 +6,6 @@ const { checkBody } = require("../modules/checkBody");
 
 const XRapidAPIKey = process.env.XRapidAPIKey;
 
-
-//Route du front pour contacter le back
-// fetch('http://localhost:3000/flights', {
-//     method:'GET',
-//     headers: { 'Content-Type': 'application/json' },
-// 	body: JSON.stringify({ flightNumber: flightNumber, date: formatedDate }),
-// }).then(response => response.json())
-// .then(data => {
-//     if (data.result) {
-
-//     }else if (data.result===false){
-
-//     }
-// });
-
 router.get("/:flightNumber/:date", (req, res) => {
 
     if (req.params.flightNumber === 'null' && req.params.date === 'null') {
@@ -39,7 +24,6 @@ router.get("/:flightNumber/:date", (req, res) => {
     }).then(response => response.json())
     .then(data => {
         if (data) {
-            console.log('test', data)
             res.json({ result: true, flightData: data });
         }else if (!data){
             res.json({ result: false, error: 'Vol introuvable' });

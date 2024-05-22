@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 
 const flightSchema = mongoose.Schema({
   flightNumber: String,
+  flightData:Array,
   notification: Boolean,
 })
 
-const tripsSchema = mongoose.Schema(
+const favoriteSchema = mongoose.Schema(
   {
     flights: [flightSchema],
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
@@ -15,6 +16,6 @@ const tripsSchema = mongoose.Schema(
   }
 );
 
-const Trips = mongoose.model("trips", tripsSchema);
+const Favorites = mongoose.model("favorite", favoriteSchema);
 
-module.exports = Trips;
+module.exports = Favorites;
