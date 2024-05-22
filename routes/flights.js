@@ -23,7 +23,7 @@ const XRapidAPIKey = process.env.XRapidAPIKey;
 
 router.get("/:flightNumber/:date", (req, res) => {
 
-    if (!checkBody(req.params, ["flightNumber", "date"])) {
+    if (req.params.flightNumber === 'null' && req.params.date === 'null') {
         res.json({
         result: false,
         error: "Tous les champs doivent être renseignés",
@@ -38,8 +38,8 @@ router.get("/:flightNumber/:date", (req, res) => {
             'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com' },
     }).then(response => response.json())
     .then(data => {
-        console.log('test')
         if (data) {
+            console.log('test', data)
             res.json({ result: true, flightData: data });
         }else if (!data){
             res.json({ result: false, error: 'Vol introuvable' });
