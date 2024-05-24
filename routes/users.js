@@ -209,7 +209,7 @@ router.delete('/favorite', async (req, res) => {
   }
 })
 
-router.get('/favorite', async (req, res) => {
+router.post('/favorites', async (req, res) => {
   if (!checkBody(req.body, [ "email", "token"])) {
     res.json({ result: false, error:"Une erreur s'est produite, veuillez réessayer."});
     return;
@@ -222,7 +222,7 @@ router.get('/favorite', async (req, res) => {
 
     if (favorites) {
 
-      res.json({result: true, favorites:favorites});
+      res.json({result: true, favorites:favorites[0].flights});
     } else {
       res.json({result: false, message:'Aucun favoris associés à cet utilisateur dans la base de donnée'});
     }
