@@ -136,19 +136,6 @@ router.delete("/", (req, res) => {
   });
 });
 
-// fetch(`http://localhost:3000/users/favorite`,{
-//   method: 'POST',
-//   headers: { 'Content-Type': 'application/json' },
-//   body: JSON.stringify({ flightNumber: flightNumber, flightData: flightData, email: email, token: token }),
-// })
-// .then((response) => response.json())
-// .then((data) => {
-//   if (data.result) {
-
-//   } else if (data.result === false) {
-
-//   }
-// });
 
 
 router.post('/favorite', async (req, res) => {
@@ -188,20 +175,6 @@ router.post('/favorite', async (req, res) => {
   }
 })
 
-// fetch(`http://localhost:3000/users/favorite`,{
-//   method: 'DELETE',
-//   headers: { 'Content-Type': 'application/json' },
-//   body: JSON.stringify({ flightNumber: flightNumber, email: email, token: token }),
-// })
-// .then((response) => response.json())
-// .then((data) => {
-//   if (data.result) {
-
-//   } else if (data.result === false) {
-
-//   }
-// });
-
 router.delete('/favorite', async (req, res) => {
   if (!checkBody(req.body, ["flightNumber", "email", "token"])) {
     res.json({ result: false, error:"Une erreur s'est produite, veuillez réessayer."});
@@ -229,6 +202,29 @@ router.delete('/favorite', async (req, res) => {
       res.json({result: true});
     } else {
       res.json({result: false, message:'le vol a déjà été supprimé ou nexiste pas'});
+    }
+
+  }else{
+    res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
+  }
+})
+
+router.get('/favorite', async (req, res) => {
+  if (!checkBody(req.body, [ "email", "token"])) {
+    res.json({ result: false, error:"Une erreur s'est produite, veuillez réessayer."});
+    return;
+  }
+
+  let userData = await User.findOne({ email: req.body.email, token: req.body.token })
+
+  if(userData){
+    let favorites = await Favorites.find({ user: userData.id });
+
+    if (favorites) {
+
+      res.json({result: true, favorites:favorites});
+    } else {
+      res.json({result: false, message:'Aucun favoris associés à cet utilisateur dans la base de donnée'});
     }
 
   }else{
