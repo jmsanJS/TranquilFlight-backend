@@ -306,11 +306,18 @@ router.put("/settings", (req, res) => {
     },
     { new: true }
   ).then((data) => {
-    res.json({
-      result: true,
-      message: "Les paramètres ont étés modifiés.",
-      data: data,
-    });
+    if(data) {
+      res.json({
+        result: true,
+        message: "Les paramètres ont étés modifiés.",
+        data: data,
+      });
+    } else {
+      res.json({
+        result: false,
+        message: "Les paramètres n'ont pas étés modifiés.",
+      });
+    }
   });
 });
 
