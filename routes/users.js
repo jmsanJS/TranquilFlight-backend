@@ -25,9 +25,9 @@ router.post("/signup", (req, res) => {
         token: uid2(32),
         settings: {
           timeFormat: "24h",
-          distUnit: "Km",
+          distUnit: "km",
           tempUnit: "°C",
-          globalNotification: "On",
+          globalNotification: "on",
         },
       });
 
