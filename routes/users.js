@@ -8,7 +8,10 @@ const uid2 = require("uid2");
 
 router.post("/signup", (req, res) => {
   if (!checkBody(req.body, ["firstname", "lastname", "email", "password"])) {
-    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
+    res.json({
+      result: false,
+      error: "Tous les champs doivent être renseignés",
+    });
     return;
   }
 
@@ -21,12 +24,11 @@ router.post("/signup", (req, res) => {
         password: req.body.password,
         token: uid2(32),
         settings: {
-          timezone: "UTC",
           timeFormat: "24h",
           distUnit: "Km",
           tempUnit: "°C",
-          globalNotification: false
-        }
+          globalNotification: "On",
+        },
       });
 
       newUser.save().then((data) => {
@@ -48,7 +50,10 @@ router.post("/signup", (req, res) => {
 
 router.post("/signin", (req, res) => {
   if (!checkBody(req.body, ["email", "password"])) {
-    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
+    res.json({
+      result: false,
+      error: "Tous les champs doivent être renseignés",
+    });
     return;
   }
 
@@ -64,7 +69,10 @@ router.post("/signin", (req, res) => {
         },
       });
     } else {
-      res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
+      res.json({
+        result: false,
+        error: "Utilisateur inexistant ou mot de passe incorrect",
+      });
     }
   });
 });
@@ -72,7 +80,10 @@ router.post("/signin", (req, res) => {
 // Update user's password
 router.put("/", (req, res) => {
   if (!checkBody(req.body, ["email", "password", "newPassword"])) {
-    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
+    res.json({
+      result: false,
+      error: "Tous les champs doivent être renseignés",
+    });
     return;
   }
   User.findOne({ email: req.body.email }).then((data) => {
@@ -84,30 +95,36 @@ router.put("/", (req, res) => {
         res.json({ result: true, message: "Le mot de passe est mis à jour" });
       });
     } else {
-      res.json({ result: false, error: "Utilisateur inexistant ou mot de passe incorrect" });
+      res.json({
+        result: false,
+        error: "Utilisateur inexistant ou mot de passe incorrect",
+      });
     }
   });
 });
 
 // Update user's infos (first and last name)
 router.put("/profile-update", (req, res) => {
-  if (!checkBody(req.body, ["oldEmail","newEmail", "token"])) {
-    res.json({ result: false, error: "Tous les champs doivent être renseignés" });
+  if (!checkBody(req.body, ["oldEmail", "newEmail", "token"])) {
+    res.json({
+      result: false,
+      error: "Tous les champs doivent être renseignés",
+    });
     return;
   }
   User.findOne({ oldEmail: req.body.email, token: req.body.token }).then(
     (data) => {
-      if (
-        req.body.oldEmail === data.email &&
-        req.body.token === data.token
-      ) {
+      if (req.body.oldEmail === data.email && req.body.token === data.token) {
         User.updateOne(
           { token: req.body.token },
           {
-            email: req.body.newEmail
+            email: req.body.newEmail,
           }
         ).then(() => {
-          res.json({ result: true, message: "L'adresse email a été mise à jour" });
+          res.json({
+            result: true,
+            message: "L'adresse email a été mise à jour",
+          });
         });
       } else {
         res.json({ result: false, error: "Utilisateur inexistant" });
@@ -119,32 +136,35 @@ router.put("/profile-update", (req, res) => {
 // Delete user's account
 router.delete("/", (req, res) => {
   if (!checkBody(req.body, ["email", "token"])) {
-    res.json({ result: false});
+    res.json({ result: false });
     return;
   }
-  User.findOne({ email: req.body.email, token:req.body.token }).then((data) => {
-    if (req.body.email === data.email && req.body.token === data.token) {
-      User.deleteOne({
-        email: req.body.email,
-        token: req.body.token,
-      }).then(() => {
-        res.json({ result: true });
-      });
-    } else {
-      res.json({ result: false, error: "Utilisateur inexistant" });
+  User.findOne({ email: req.body.email, token: req.body.token }).then(
+    (data) => {
+      if (req.body.email === data.email && req.body.token === data.token) {
+        User.deleteOne({
+          email: req.body.email,
+          token: req.body.token,
+        }).then(() => {
+          res.json({ result: true });
+        });
+      } else {
+        res.json({ result: false, error: "Utilisateur inexistant" });
+      }
     }
-  });
+  );
 });
 
-
-
-router.post('/favorite', async (req, res) => {
+router.post("/favorite", async (req, res) => {
   if (!checkBody(req.body, ["flightNumber", "flightData", "email", "token"])) {
-    res.json({ result: false});
+    res.json({ result: false });
     return;
   }
 
-  let userData = await User.findOne({ email: req.body.email, token: req.body.token })
+  let userData = await User.findOne({
+    email: req.body.email,
+    token: req.body.token,
+  });
 
   const newFavorite = {
     flightNumber: req.body.flightNumber,
@@ -152,42 +172,53 @@ router.post('/favorite', async (req, res) => {
     notification: false,
   };
 
-  if(userData){
+  if (userData) {
     let favorites = await Favorites.findOne({ user: userData.id });
 
     if (favorites) {
-      console.log(favorites)
+      console.log(favorites);
       // Si le document existe, ajoutez le vol au tableau flights
       favorites.flights.push(newFavorite);
-      res.json({result: true});
+      res.json({ result: true });
     } else {
-      console.log('existe pas')
+      console.log("existe pas");
       // Sinon, créez un nouveau document
       favorites = new Favorites({
         user: userData.id,
         flights: [newFavorite],
       });
-      res.json({result: true});
+      res.json({ result: true });
     }
     await favorites.save();
-  }else{
-    res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
+  } else {
+    res.json({
+      result: false,
+      error: `Utilisateur ${req.body.email} introuvable`,
+    });
   }
-})
+});
 
-router.delete('/favorite', async (req, res) => {
+router.delete("/favorite", async (req, res) => {
   if (!checkBody(req.body, ["flightNumber", "email", "token"])) {
-    res.json({ result: false, error:"Une erreur s'est produite, veuillez réessayer."});
+    res.json({
+      result: false,
+      error: "Une erreur s'est produite, veuillez réessayer.",
+    });
     return;
   }
 
-  let userData = await User.findOne({ email: req.body.email, token: req.body.token })
+  let userData = await User.findOne({
+    email: req.body.email,
+    token: req.body.token,
+  });
 
-  if(userData){
+  if (userData) {
     let favorites = await Favorites.findOne({ user: userData.id });
 
     if (favorites) {
-      const flightIndex = favorites.flights.findIndex(flight => flight.flightNumber.toString() === req.body.flightNumber);
+      const flightIndex = favorites.flights.findIndex(
+        (flight) => flight.flightNumber.toString() === req.body.flightNumber
+      );
 
       if (flightIndex === -1) {
         return res.status(404).json({
@@ -199,37 +230,88 @@ router.delete('/favorite', async (req, res) => {
       favorites.flights.splice(flightIndex, 1);
       await favorites.save();
 
-      res.json({result: true});
+      res.json({ result: true });
     } else {
-      res.json({result: false, message:'le vol a déjà été supprimé ou nexiste pas'});
+      res.json({
+        result: false,
+        message: "le vol a déjà été supprimé ou nexiste pas",
+      });
     }
-
-  }else{
-    res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
+  } else {
+    res.json({
+      result: false,
+      error: `Utilisateur ${req.body.email} introuvable`,
+    });
   }
-})
+});
 
-router.post('/favorites', async (req, res) => {
-  if (!checkBody(req.body, [ "email", "token"])) {
-    res.json({ result: false, error:"Une erreur s'est produite, veuillez réessayer."});
+router.post("/favorites", async (req, res) => {
+  if (!checkBody(req.body, ["email", "token"])) {
+    res.json({
+      result: false,
+      error: "Une erreur s'est produite, veuillez réessayer.",
+    });
     return;
   }
 
-  let userData = await User.findOne({ email: req.body.email, token: req.body.token })
+  let userData = await User.findOne({
+    email: req.body.email,
+    token: req.body.token,
+  });
 
-  if(userData){
+  if (userData) {
     let favorites = await Favorites.find({ user: userData.id });
 
     if (favorites) {
-
-      res.json({result: true, favorites:favorites[0].flights});
+      res.json({ result: true, favorites: favorites[0].flights });
     } else {
-      res.json({result: false, message:'Aucun favoris associés à cet utilisateur dans la base de donnée'});
+      res.json({
+        result: false,
+        message:
+          "Aucun favoris associés à cet utilisateur dans la base de donnée",
+      });
     }
-
-  }else{
-    res.json({result: false, error:`Utilisateur ${req.body.email} introuvable`});
+  } else {
+    res.json({
+      result: false,
+      error: `Utilisateur ${req.body.email} introuvable`,
+    });
   }
-})
+});
+
+// Get user's settings
+router.post("/settings", (req, res) => {
+  User.findOne({ email: req.body.email, token: req.body.token }).then(
+    (data) => {
+      if (data) {
+        res.json({ result: true, userData: data.settings });
+      } else {
+        res.json({ result: false, message: "L'utilisateur est déconnecté." });
+      }
+    }
+  );
+});
+
+// Update user's settings
+router.put("/settings", (req, res) => {
+  User.findOneAndUpdate(
+    { token: req.body.token },
+    {
+      $set: {
+        "settings.timeFormat": req.body.timeFormat,
+        "settings.distUnit": req.body.distUnit,
+        "settings.tempUnit": req.body.tempUnit,
+        "settings.globalNotification": req.body.globalNotification,
+      },
+    },
+    { new: true }
+  ).then((data) => {
+    res.json({
+      result: true,
+      message: "Les paramètres ont étés modifiés.",
+      data: data,
+    });
+  });
+});
 
 module.exports = router;

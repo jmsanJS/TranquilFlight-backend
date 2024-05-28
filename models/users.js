@@ -2,11 +2,10 @@ const mongoose = require("mongoose");
 const { capitalizeStr } = require("../modules/capitalizeStr");
 
 const settingsSchema = mongoose.Schema({
-  timezone: String,
   timeFormat: String,
   distUnit: String,
   tempUnit: String,
-  globalNotification: Boolean,
+  globalNotification: String,
 })
 
 const userSchema = mongoose.Schema(
