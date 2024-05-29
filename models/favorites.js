@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 
 const flightSchema = mongoose.Schema({
-  flightNumber: String,
-  flightData:Array,
+  flightData:Object,
   notification: Boolean,
 })
 

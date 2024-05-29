@@ -156,7 +156,7 @@ router.delete("/", (req, res) => {
 });
 
 router.post("/favorite", async (req, res) => {
-  if (!checkBody(req.body, ["flightNumber", "flightData", "email", "token"])) {
+  if (!checkBody(req.body, ["flightData", "email", "token"])) {
     res.json({ result: false });
     return;
   }
@@ -167,7 +167,6 @@ router.post("/favorite", async (req, res) => {
   });
 
   const newFavorite = {
-    flightNumber: req.body.flightNumber,
     flightData: req.body.flightData,
     notification: false,
   };
