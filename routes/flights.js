@@ -41,6 +41,8 @@ router.get("/:flightNumber/:date", (req, res) => {
                                     countryCode:data[0].departure.airport.countryCode,
                                     scheduledTimeUTC:data[0].departure.scheduledTime.utc,
                                     scheduledTimeLocal:data[0].departure.scheduledTime.local,
+                                    revisedTimeUTC:'',
+                                    revisedTimeLocal:''
                                 },
                         arrival : {iata:data[0].arrival.airport.iata,
                             city:data[0].arrival.airport.municipalityName,
@@ -48,6 +50,8 @@ router.get("/:flightNumber/:date", (req, res) => {
                             countryCode:data[0].arrival.airport.countryCode,
                             scheduledTimeUTC:data[0].arrival.scheduledTime.utc,
                             scheduledTimeLocal:data[0].arrival.scheduledTime.local,
+                            revisedTimeUTC:'',
+                            revisedTimeLocal:''
                         },
                     } 
                 });
@@ -104,6 +108,8 @@ router.get("/:flightNumber/:date", (req, res) => {
                             countryCode:data[0].arrival.airport.countryCode,
                             scheduledTimeUTC:data[0].arrival.scheduledTime.utc,
                             scheduledTimeLocal:data[0].arrival.scheduledTime.local,
+                            revisedTimeUTC:'',
+                            revisedTimeLocal:''
                         },
                     } 
                 });
@@ -122,6 +128,8 @@ router.get("/:flightNumber/:date", (req, res) => {
                                     countryCode:data[0].departure.airport.countryCode,
                                     scheduledTimeUTC:data[0].departure.scheduledTime.utc,
                                     scheduledTimeLocal:data[0].departure.scheduledTime.local,
+                                    revisedTimeUTC:'',
+                                    revisedTimeLocal:''
                                 },
                         arrival : {iata:data[0].arrival.airport.iata,
                             city:data[0].arrival.airport.municipalityName,
