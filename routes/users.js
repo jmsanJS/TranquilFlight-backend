@@ -216,7 +216,7 @@ router.delete("/favorite", async (req, res) => {
 
     if (favorites) {
       const flightIndex = favorites.flights.findIndex(
-        (flight) => flight.flightNumber.toString() === req.body.flightNumber
+        (flight) => flight.flightData.flightNumber.toString() === req.body.flightNumber
       );
 
       if (flightIndex === -1) {
