@@ -175,12 +175,10 @@ router.post("/favorite", async (req, res) => {
     let favorites = await Favorites.findOne({ user: userData.id });
 
     if (favorites) {
-      console.log(favorites);
       // Si le document existe, ajoutez le vol au tableau flights
       favorites.flights.push(newFavorite);
       res.json({ result: true });
     } else {
-      console.log("existe pas");
       // Sinon, créez un nouveau document
       favorites = new Favorites({
         user: userData.id,
@@ -222,8 +220,6 @@ router.delete("/favorite", async (req, res) => {
           return flightNumberData === flightNumberReq;
         }
       );
-
-      console.log('flightIndex----->', flightIndex)
 
       if (flightIndex === -1) {
         return res.status(404).json({
