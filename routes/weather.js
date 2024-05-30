@@ -30,7 +30,7 @@ router.get("/:city", async (req, res) => {
     const cityData = await getCityIdResponse.json();
 
     if(cityData.length>0){
-        const getWeatherDataResponse = await fetch(`https://www.meteosource.com/api/v1/free/point?place_id=${cityData[0].place_id}&sections=daily&timezone=auto`, {
+        const getWeatherDataResponse = await fetch(`https://www.meteosource.com/api/v1/free/point?place_id=${cityData[0].place_id}&sections=daily&timezone=auto&units=metric`, {
             method: 'GET',
             headers: { 
                 'X-API-Key': WEATHER_API_KEY},
