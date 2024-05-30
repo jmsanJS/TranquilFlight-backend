@@ -23,7 +23,6 @@ router.get("/:flightNumber/:date", (req, res) => {
             'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com' },
     }).then(response => response.json())
     .then(data => {
-        console.log (data[0].departure.revisedTime)
         if (data) {
 
             if (data[0].departure.revisedTime === undefined && data[0].arrival.revisedTime === undefined){
