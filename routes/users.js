@@ -156,7 +156,7 @@ router.delete("/", (req, res) => {
 });
 
 router.post("/favorite", async (req, res) => {
-  if (!checkBody(req.body, ["flightNumber", "flightData", "email", "token"])) {
+  if (!checkBody(req.body, ["flightData", "email", "token"])) {
     res.json({ result: false });
     return;
   }
@@ -167,7 +167,6 @@ router.post("/favorite", async (req, res) => {
   });
 
   const newFavorite = {
-    flightNumber: req.body.flightNumber,
     flightData: req.body.flightData,
     notification: false,
   };
@@ -217,8 +216,14 @@ router.delete("/favorite", async (req, res) => {
 
     if (favorites) {
       const flightIndex = favorites.flights.findIndex(
-        (flight) => flight.flightNumber.toString() === req.body.flightNumber
+        (flight) => {
+          const flightNumberData = flight.flightData.flightNumber.trim();
+          const flightNumberReq = req.body.flightNumber.trim();
+          return flightNumberData === flightNumberReq;
+        }
       );
+
+      console.log('flightIndex----->', flightIndex)
 
       if (flightIndex === -1) {
         return res.status(404).json({
