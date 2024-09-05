@@ -213,13 +213,11 @@ router.delete("/favorite", async (req, res) => {
     let favorites = await Favorites.findOne({ user: userData.id });
 
     if (favorites) {
-      const flightIndex = favorites.flights.findIndex(
-        (flight) => {
-          const flightNumberData = flight.flightData.flightNumber.trim();
-          const flightNumberReq = req.body.flightNumber.trim();
-          return flightNumberData === flightNumberReq;
-        }
-      );
+      const flightIndex = favorites.flights.findIndex((flight) => {
+        const flightNumberData = flight.flightData.flightNumber.trim();
+        const flightNumberReq = req.body.flightNumber.trim();
+        return flightNumberData === flightNumberReq;
+      });
 
       if (flightIndex === -1) {
         return res.status(404).json({
@@ -307,7 +305,7 @@ router.put("/settings", (req, res) => {
     },
     { new: true }
   ).then((data) => {
-    if(data) {
+    if (data) {
       res.json({
         result: true,
         message: "Les paramètres ont étés modifiés.",

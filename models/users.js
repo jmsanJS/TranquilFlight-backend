@@ -6,7 +6,7 @@ const settingsSchema = mongoose.Schema({
   distUnit: String,
   tempUnit: String,
   globalNotification: String,
-})
+});
 
 const userSchema = mongoose.Schema(
   {

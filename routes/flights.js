@@ -1,9 +1,6 @@
 var express = require("express");
 var router = express.Router();
 
-//const User = require("../models/users");
-const { checkBody } = require("../modules/checkBody");
-
 const XRapidAPIKey = process.env.XRapidAPIKey;
 
 router.get("/:flightNumber/:date", (req, res) => {
